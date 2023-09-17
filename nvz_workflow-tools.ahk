@@ -1,9 +1,174 @@
+; ※※※ THIS SCRIPT REQUIRES AUTOHOTKEY V2 ※※※
+
 ; ---- Ableton Live Workflow Tools by nova+z (aka. Nagrahtrev) ----
 
-; ※ THIS SCRIPT REQUIRES AUTOHOTKEY V2 ※
-#Requires AutoHotkey v2.0
+; AutoHotkey Documentation: https://www.autohotkey.com/docs/v2/
+; Keyname List: https://www.autohotkey.com/docs/v2/KeyList.htm
 
-; Script Settings
+; Let the Script Know Your Ableton Live Language Setting
+Language := 'English'  ;; Deutsch/English/Español/Français/Italiano/日本語/简体中文
+
+; ↓↓↓ Change Hotkey to Suit Your Preference ↓↓↓
+ShowMenu := 'MButton'  ;; Display Plugin Popup Menu
+ClosePlug := 'Esc'  ;; Close Activated VST Plugin Window
+LeftHandDel := '``'  ;; Double Press Key to Delete
+ClearEnv := '!e'  ;; Clear Automation/Envelope
+SelectAllExport := '^+r'  ;; Select All and Export
+CollectAllSave := '^!s'  ;; Collect All and Save
+DuplicateTo8 := '!d'  ;; Duplicate to 8
+PasteTo8 := '!v'  ;; Paste to 8
+FindVst := '^+f'  ;; Search VST Plugin
+Deactivate := 'XButton1'  ;; Deactivate Selected Clips
+NewMIdiClip := 'XButton2'  ;; Create Non-Looped MIdI Clip
+ShowHIdeAll := 'F10'  ;; Show/HIde All Views
+NewLaneEnv := '!a'  ;; Add Automation in New Lane (Mouse Keep Hovering)
+AssignColor := '!c'  ;; Assign Color to Clips (Mouse Keep Hovering)
+OpenPreferences := 'F12'  ;; Open Preferences Window
+
+; Shortcut Remapping (On/Off)
+ShiftTabToTab := 'On'  ;; Swap TAB and SHIFT + TAB
+BetterRedo := 'On'  ;; Redo with CTRL + SHIFT + Z
+EnglishIme := 'Off'  ;; Auto Switch to English IME (Microsoft)
+
+; Transpose MIdI Note Easily (Also Can Tweak Knob)
+MIdiNoteUp := '+WheelUp'  ;; Move Up/Increase
+MIdiNoteDn := '+WheelDown'  ;; Move Down/Decrease
+MIdiOctaveUp := '^+WheelUp'  ;; Move Up an Octave/Finer Increase
+MIdiOctaveDn := '^+WheelDown'  ;; Move Down an Octave/Finer Decrease
+
+; Device Loader (Use CAPSLOCK + [1 ~ 5])
+LoadPlug1 := '~Capslock & 1'
+PlugName1 := 'EQ Eight'
+
+LoadPlug2 := '~Capslock & 2'
+PlugName2 := 'VST Pro Q-3'
+
+LoadPlug3 := '~Capslock & 3'
+PlugName3 := 'Utility'
+
+LoadPlug4 := '~Capslock & 4'
+PlugName4 := ''
+
+LoadPlug5 := '~Capslock & 5'
+PlugName5 := ''
+
+; Quick Find Category/Collection
+; Use 'AutoHotkey Window Spy' to Get Position (Relative to Window)
+Category1 := 'F1'  ;; Red
+xpos1 := 30
+ypos1 := 140
+
+Category2 := 'F2'  ;; Orange
+xpos2 := 30
+ypos2 := 160
+
+Category3 := 'F3'  ;; Yellow
+xpos3 := 30
+ypos3 := 178
+
+Category4 := 'F4'  ;; Green
+xpos4 := 30
+ypos4 := 197
+
+Category5 := 'F5'  ;; Blue
+xpos5 := 30
+ypos5 := 216
+
+Category6 := 'F6'  ;; Purple
+xpos6 := 30
+ypos6 := 235
+
+Category7 := 'F7'  ;; Gray
+xpos7 := 30
+ypos7 := 255
+
+Category8 := 'F8'  ;; Sample Pack Folder
+xpos8 := 30
+ypos8 := 654
+
+; Plugin Popup Menu Customization
+MainMenu := Menu()
+;------------------------------------------------------;
+;             menuitem                                 ;
+;           /            menuitem                      ;
+;          /           /                               ;
+; MainMenu -- SubMenu1 -- SubMenu1_1                   ;
+;          \             menuitem                      ;
+;           \          /                               ;
+;             SubMenu2 -- SubMenu2_1                   ;
+;                      \                               ;
+;                       SubMenu2_2 -- SubMenu2_2_1     ;
+;                                  \                   ;
+;                                    SubMenu2_2_2...   ;
+;                                                      ;
+;              Level 1     Level 2     Level 3         ;
+;------------------------------------------------------;
+
+; ↓↓↓ Add Main Menu Items Here ↓↓↓
+; CURRENT MENU.Add 'DISPLAY NAME IN LIVE BROWSER', DEVICE TYPE(ableton/vst/vst3/preset/rack/max)
+MainMenu.Add 'Utility', ableton
+MainMenu.Add '-- ADD ITEM HERE --', vst
+
+MainMenu.Add  ;; Separator Line
+
+; ↓↓↓ Create Multi-Level Menus ↓↓↓
+SubMenu1 := Menu()
+; PARENT MENU.Add "CATEGORY NAME", CURRENT MENU
+MainMenu.Add 'EQ', SubMenu1
+
+; ↓↓↓ Add Sub Menu Items Here ↓↓↓
+SubMenu1.Add 'EQ Eight', ableton
+SubMenu1.Add 'Fabfilter Pro-Q 3', vst
+SubMenu1.Add '-- ADD ITEM HERE --', ableton
+
+SubMenu1.Add    ;; Separator Line
+
+; ↓↓↓ Create Extra Level of Sub Menu ↓↓↓
+SubMenu1_1 := Menu()
+SubMenu1.Add 'Filter', SubMenu1_1
+
+SubMenu1_1.Add 'Auto Filter', ableton
+SubMenu1_1.Add '-- ADD ITEM HERE--', rack
+
+; ----
+
+SubMenu2 := Menu()
+MainMenu.Add 'Compressor', SubMenu2
+
+SubMenu2.Add 'Glue Compressor', ableton
+SubMenu2.Add 'Fabfilter Pro-C 2', vst
+SubMenu2.Add
+
+SubMenu2_1 := Menu()
+SubMenu2.Add 'Analog', SubMenu2_1
+
+SubMenu2_1.Add 'API-2500 Stereo', vst3
+SubMenu2_1.Add 'CLA-2A Mono', vst3
+
+SubMenu2_2 := Menu()
+SubMenu2.Add 'Multiband', SubMenu2_2
+
+SubMenu2_2.Add 'OTT', preset
+SubMenu2_2.Add 'Fabfilter Pro-MB', vst
+
+; ----
+
+; ↓↓↓ Back to Main Menu ↓↓↓
+MainMenu.Add    ;; Separator Line
+
+; Add Disabled (Gray Color) Menu Item to Categorize Following Items
+MainMenu.Add '------ Tools ------', category
+MainMenu.Disable '------ Tools ------'
+
+MainMenu.Add 'Velocity', ableton
+MainMenu.Add 'Arpeggiator', ableton
+
+
+; -------------------------------------------------------------------------------
+;                            ※※※ DON'T TOUCH ※※※
+; -------------------------------------------------------------------------------
+
+; Script Setting
 InstallKeybdHook
 #UseHook
 #SingleInstance force
@@ -14,121 +179,66 @@ LShift & F12::Suspend
 #SuspendExempt False
 CoordMode 'Mouse', 'Window'
 
-
-; You can change any hotkey to suit your preferences
-; Please read the documentation (https://www.autohotkey.com/docs/v2/) before customizing it
-; And here is the list of keynames: https://www.autohotkey.com/docs/v2/KeyList.htm
-
-
-; Disable a block of code you don't need by multi-line comments. For example:
-/*
-I'M COMMENTED OUT. TAT
-*/
-
-
-; --------------------------------------- START ---------------------------------------
-
-; The following directives only work in specific windows
+; Only Work in Specific Window
 GroupAdd 'Ableton', 'ahk_class Ableton Live Window Class'
 GroupAdd 'Ableton', 'ahk_class AbletonVstPlugClass'
 GroupAdd 'Ableton', 'ahk_class Vst3PlugWindow'
-#HotIf WinActive('ahk_group Ableton')
 
+HotIfWinActive('ahk_group Ableton')
 
-; --------------------------------------- DEVICE MENU CUSTOMIZATION ---------------------------------------
+; Register Hotkey
+Hotkey ShowMenu, myFuncShowMenu
+Hotkey ClosePlug, myFuncClosePlug
+Hotkey LeftHandDel, myFuncLeftHandDel
+Hotkey ClearEnv, myFuncClearEnv
+Hotkey SelectAllExport, myFuncSelectAllExport
+Hotkey CollectAllSave, myFuncCollectAllSave
+Hotkey DuplicateTo8, myFuncDuplicateTo8
+Hotkey PasteTo8, myFuncPasteTo8
+Hotkey FindVst, myFuncFindVst
+Hotkey Deactivate, myFuncDeactivate
+Hotkey NewMIdiClip, myFuncNewMIdiClip
+Hotkey ShowHIdeAll, myFuncShowHIdeAll
+Hotkey NewLaneEnv, myFuncNewLaneEnv
+Hotkey AssignColor, myFuncAssignColor
+Hotkey OpenPreferences, myFuncOpenPreferences
 
-MButton::mainmenu.Show    ;; MBUTTON, Display the Menu
+Hotkey MIdiNoteUp, myFuncMIdiNoteUp
+Hotkey MIdiNoteDn, myFuncMIdiNoteDn
+Hotkey MIdiOctaveUp, myFuncMIdiOctaveUp
+Hotkey MIdiOctaveDn, myFuncMIdiOctaveDn
 
-; Add main menu items here ↓↓↓
-; CURRENT MENU.Add 'DISPLAY NAME IN LIVE BROWSER', DEVICE TYPE(ableton/vst/vst3/preset/rack/max)
-mainmenu := Menu()
+Hotkey LoadPlug1, myFuncLoadPlug1
+Hotkey LoadPlug2, myFuncLoadPlug2
+Hotkey LoadPlug3, myFuncLoadPlug3
+Hotkey LoadPlug4, myFuncLoadPlug4
+Hotkey LoadPlug5, myFuncLoadPlug5
 
-mainmenu.Add 'Utility', ableton
-mainmenu.Add '-- I AM A MENU ITEM --', vst
+Hotkey Category1, myFuncCategory1
+Hotkey Category2, myFuncCategory2
+Hotkey Category3, myFuncCategory3
+Hotkey Category4, myFuncCategory4
+Hotkey Category5, myFuncCategory5
+Hotkey Category6, myFuncCategory6
+Hotkey Category7, myFuncCategory7
+Hotkey Category8, myFuncCategory8
 
-mainmenu.Add    ;; Separator Line
+; Plugin Popup Menu
+myFuncShowMenu(*) {
+    MainMenu.Show    ;; MBUTTON, Display the Menu
+}
 
-; Create multi-level menus here ↓↓↓
-;------------------------------------------------------;
-;             menuitem                                 ;
-;           /            menuitem                      ;
-;          /           /                               ;
-; mainmenu -- submenu1 -- submenu1_1                   ;
-;          \             menuitem                      ;
-;           \          /                               ;
-;             submenu2 -- submenu2_1                   ;
-;                      \                               ;
-;                       submenu2_2 -- submenu2_2_1     ;
-;                                  \                   ;
-;                                    submenu2_2_2...   ;
-;                                                      ;
-;              Level 1     Level 2      Level 3        ;
-;------------------------------------------------------;
-
-submenu1 := Menu()    ;; Create a Submenu
-
-mainmenu.Add 'EQ', submenu1    ;; PARENT MENU.Add "CATEGORY NAME", CURRENT MENU
-
-submenu1.Add 'EQ Eight', ableton    ;; Add Item to Submenu
-submenu1.Add 'Fabfilter Pro-Q 3', vst
-submenu1.Add '-- ADD ITEM HERE --', ableton
-
-submenu1.Add    ;; Separator Line
-
-submenu1_1 := Menu()    ;; Create an Extra Level of Submenu
-
-submenu1.Add 'Filter', submenu1_1
-
-submenu1_1.Add 'Auto Filter', ableton
-submenu1_1.Add '-- ADD ITEM HERE--', rack
-
-submenu2 := Menu()
-
-mainmenu.Add 'Compressor', submenu2
-
-submenu2.Add 'Glue Compressor', ableton
-submenu2.Add 'Fabfilter Pro-C 2', vst
-submenu2.Add    ;; Separator Line
-
-submenu2_1 := Menu()
-
-submenu2.Add 'Analog', submenu2_1
-
-submenu2_1.Add 'API-2500 Stereo', vst3
-submenu2_1.Add 'CLA-2A Mono', vst3
-
-submenu2_2 := Menu()
-
-submenu2.Add 'Multiband', submenu2_2
-
-submenu2_2.Add 'OTT', preset
-submenu2_2.Add 'Fabfilter Pro-MB', vst
-
-; Back to main menu
-mainmenu.Add    ;; Separator Line
-
-; You can add a disabled (gray color) menu item to categorize following items
-mainmenu.Add '------ Tools ------', category
-mainmenu.Disable '------ Tools ------'    ;; Changes it to a gray color
-
-mainmenu.Add 'Velocity', ableton
-mainmenu.Add 'Dry-Wet', rack
-mainmenu.Add 'LFO Random', max
-
-
-; Don't touch it :(
 ableton(item_ableton, *)
 {
-    Send '{Ctrl Down}f{Ctrl Up}'
+    Send '^f'
     SendText item_ableton
     Sleep 500
     Send '{Down}'
     MouseMove 180, 140, 0
 }
 
-rack(item_rack, *)
-{
-    Send '{Ctrl Down}f{Ctrl Up}'
+rack(item_rack, *) {
+    Send '^f'
     SendText 'adg ""'
     Sleep 10
     Send '{Left}'
@@ -138,9 +248,8 @@ rack(item_rack, *)
     MouseMove 180, 140, 0
 }
 
-preset(item_preset, *)
-{
-    Send '{Ctrl Down}f{Ctrl Up}'
+preset(item_preset, *) {
+    Send '^f'
     SendText 'adv ""'
     Sleep 10
     Send '{Left}'
@@ -150,9 +259,8 @@ preset(item_preset, *)
     MouseMove 180, 140, 0
 }
 
-max(item_max, *)
-{
-    Send '{Ctrl Down}f{Ctrl Up}'
+max(item_max, *) {
+    Send '^f'
     SendText 'amxd ""'
     Sleep 10
     Send '{Left}'
@@ -162,9 +270,8 @@ max(item_max, *)
     MouseMove 180, 140, 0
 }
 
-vst(item_vst, *)
-{
-    Send '{Ctrl Down}f{Ctrl Up}'
+vst(item_vst, *) {
+    Send '^f'
     SendText 'vst ""'
     Sleep 10
     Send '{Left}'
@@ -174,9 +281,8 @@ vst(item_vst, *)
     MouseMove 180, 140, 0
 }
 
-vst3(item_vst3, *)
-{
-    Send '{Ctrl Down}f{Ctrl Up}'
+vst3(item_vst3, *) {
+    Send '^f'
     SendText 'vst3 ""'
     Sleep 10
     Send '{Left}'
@@ -186,198 +292,133 @@ vst3(item_vst3, *)
     MouseMove 180, 140, 0
 }
 
-category(*)
-{
-    MsgBox "Why don't you just disable it huh?"
+category(*) {
+    MsgBox "Why Don't You Just Disable It HUH?"
 }
 
-
-; --------------------------------------- CLOSE ACTIVATED VST PLUGIN WINDOW ---------------------------------------
-
-Esc::    ;; ESC
-{
-    vstprocess := WinGetProcessName('A')
-    vstclass := WinGetClass('A')
-    vsttitle := WinGetTitle('A')
-
+; Close Activated Plugin Window
+myFuncClosePlug(*) {
+    vst_Process := WinGetProcessName('A')
+    vst_Class := WinGetClass('A')
+    vst_Title := WinGetTitle('A')
+    
     SetTitleMatchMode 2
-    if RegExMatch(vstprocess,'Ableton')
-    {
-        if RegExMatch(vstclass,'AbletonVstPlugClass') or RegExMatch(vstclass,'Vst3PlugWindow')
-        {
-	        WinClose vsttitle 
+    if RegExMatch(vst_Process, 'Ableton') {
+        if RegExMatch(vst_Class, 'AbletonVstPlugClass') or RegExMatch(vst_Class, 'Vst3PlugWindow') {
+	        WinClose vst_Title 
 	    }
         else
-        {
             Send '{Esc}'
-        }
     }
 }
 
-
-; --------------------------------------- LEFT HAND DELETE ---------------------------------------
-
-~`::    ;; Double Press [`]
-{
+; Left Hand Delete
+myFuncLeftHandDel(ThisHotkey) {
     A_HotkeyInterval := 200
-    if (A_PriorHotkey != '~``' or A_TimeSincePriorHotkey > A_HotkeyInterval)
-    {
-        KeyWait '``'
-        return
+    if (A_PriorHotkey = ThisHotkey && A_TimeSincePriorHotkey < A_HotkeyInterval) {
+        Send '{Del}'
     }
-
-    Send '{Del}'
+    else
+        Send ThisHotkey
 }
 
-^`::    ;; CTRL + [`], Clear Automation/Envolope
-{
-    Send '^{Del}'
+; Clear Automation/Envolope
+myFuncClearEnv(*) {
+        Send '^{BackSpace}'
 }
 
-
-; --------------------------------------- SWAP TAB AND SHIFT+TAB ---------------------------------------
-
-Tab::+Tab
-+Tab::Tab
-
-
-; --------------------------------------- SELECT ALL AND EXPORT ---------------------------------------
-
-^+r::    ;; CTRL + SHIFT + [R]
-{
+; Select All and Export
+myFuncSelectAllExport(*){
     Send '^+l'
     Sleep 100
     Send '^+r'
 }
 
-
-; --------------------------------------- COLLECT ALL AND SAVE ---------------------------------------
-
-^!s::
-{
-    MouseClick , 20, 40, , 0
-    Sleep 200
-    Send '{Down 10}'
-    Sleep 10
-    Send '{Enter 2}'
+; Collect All and Save
+myLanguange := Language
+myFuncCollectAllSave(*) {
+    if InStr(myLanguange, 'English') {
+        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Collect all and save'
+    }
+    else if InStr(myLanguange, 'Deutsch') or InStr(myLanguange, 'German') {
+        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Alles sammeln und sichern'
+    }
+    else if InStr(myLanguange, 'Español') or InStr(myLanguange, 'Spanish') {
+        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Recopilar todo y guardar'
+    }
+    else if InStr(myLanguange, 'Français') or InStr(myLanguange, 'French') {
+        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Réunir et sauvegarder'
+    }
+    else if InStr(myLanguange, 'Italian') {
+        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Raccogli tutto e Salva'
+    }
+    else if InStr(myLanguange, '日本語') or InStr(myLanguange, 'Japanese') {
+        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'すべてを集めて保存'
+    }
+    else if InStr(myLanguange, '中文') or InStr(myLanguange, 'Chinese') {
+        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', '全部收集并保存'
+    }
 }
 
-
-; --------------------------------------- DUPLICATE/PASTE TO 8 ---------------------------------------
-
-!d::    ;; ALT + [D], Duplicate
-{
+; Duplicate to 8
+myFuncDuplicateTo8(*) {
     Send '^{d 7}'
 }
 
-!v::    ;; ALT + [V], Paste
-{
+; Paste to 8
+myFuncPasteTo8(*) {
     Send '^v'
     Sleep 10
     Send '^{d 7}'
 }
 
-
-; --------------------------------------- SEARCH ONLY VST PLUGINS ---------------------------------------
-
-^+f::    ;; CTRL + SHIFT + [F]
-{
-    Send '{Ctrl Down}f{Ctrl Up}'
+; Search VST Plugin
+myFuncFindVst(*) {
+    Send '^f'
     Sleep 10
     SendText 'vst '
 }
 
-^f::    ;; CTRL + [F], Clear Search Field
-{
+; Clear Search Field
+Hotkey '^f', myFuncClearField
+myFuncClearField(*) {
     Send '^f'
     Send '{BackSpace}'
 }
 
-
-; --------------------------------------- DEACTIVATE SELECTED CLIPS ---------------------------------------
-
-XButton1::    ;; XBUTTON1
-{
+; Deactivate Selected Clips
+myFuncDeactivate(*) {
     Send '{Numpad0}'
 }
 
-
-; --------------------------------------- CREATE NON-LOOPED MIDI CLIP ---------------------------------------
-
-XButton2::    ;; XBUTTON2
-{
+; Create Non-Looped MIdI Clip
+myFuncNewMIdiClip(*) {
     Send '^+m'
     Sleep 10
     Send '^j'
 }
 
-
-; --------------------------------------- PUT MIDI NOTE EASILY (ALSO CAN TWEAK KNOB) ---------------------------------------
-
-HotIf (*) => GetKeyState('``', 'P')
-
-; Hold [`] + MouseWheel, Transpose by Semitone
-Hotkey "WheelUp", moveup
-Hotkey "WheelDown", movedn
-
-; Hold [`] + SHIFT + MouseWheel, Transpose by Octave
-Hotkey "+WheelUp", moveupoct
-Hotkey "+WheelDown", movednoct
-
-` & ~LButton::    ;; Hold [`] and Drag to Put Notes
-{
-    Click 'Down'
-    KeyWait 'LButton'
-    Click 'Up'
+; Show/HIde All Views
+myFuncShowHIdeAll(*) {
+    SendEvent '^!b'
+    Sleep 10
+    SendEvent '^!l'
+    Sleep 10
+    SendEvent '^!i'
+    Sleep 10
+    SendEvent '^!s'
+    Sleep 10
+    SendEvent '^!o'
+    Sleep 10
+    SendEvent '^!m'
+    Sleep 10
+    SendEvent '^!r'
 }
 
-moveup(*)
-{
-    Send '{Up}'
-}
-
-movedn(*)
-{
-    Send '{Down}'
-}
-moveupoct(*)
-{
-    Send '+{Up}'
-}
-
-movednoct(*)
-{
-    Send '+{Down}'
-}
-
-
-; --------------------------------------- SHOW/HIDE ALL VIEWS ---------------------------------------
-
-F10::    ;; F10
-{
-    Send '^!b'
-    Sleep 10
-    Send '^!l'
-    Sleep 10
-    Send '^!i'
-    Sleep 10
-    Send '^!s'
-    Sleep 10
-    Send '^!o'
-    Sleep 10
-    Send '^!m'
-    Sleep 10
-    Send '^!r'
-}
-
-
-; --------------------------------------- ADD AUTOMATION IN NEW LANE ---------------------------------------
-
-!a::    ;; ALT + [A] (Mouse Keeps Hovering)
-{
+; Add Automation in New Lane
+myFuncNewLaneEnv(*) {
     WinTitle := WinGetTitle('A')
-    if RegExMatch(WinTitle,'Ableton')
-    {
+    if Instr(WinTitle,'Ableton') {
         Send '{RButton}'
         Sleep 10
         Send '{Down 2}'
@@ -385,14 +426,10 @@ F10::    ;; F10
     }
 }
 
-
-; --------------------------------------- ASSIGN COLOR TO CLIPS ---------------------------------------
-
-!c::    ;; ALT + [C] (Mouse Keeps Hovering)
-{
+; Assign Color to Clips
+myFuncAssignColor(*) {
     WinTitle := WinGetTitle('A')
-    if RegExMatch(WinTitle,'Ableton')
-    {
+    if Instr(WinTitle,'Ableton') {
         Send '{RButton}'
         Sleep 10
         Send '{Up 2}'
@@ -400,202 +437,150 @@ F10::    ;; F10
     }
 }
 
+; Open Preferences Window
+myFuncOpenPreferences(*) {
+    Send '^,'
+}
 
-; --------------------------------------- QUICK FIND CATEGORIES ---------------------------------------
+; Transpose MIdI Note Easily
+myFuncMIdiNoteUp(*) {
+    Send '{Up}'
+}
 
-; Use 'AutoHotkey Window Spy' to get the position of CATEGORIES relative to the Ableton Live window
-xpos1 := 30    ;; Red
-ypos1 := 140
+myFuncMIdiNoteDn(*) {
+    Send '{Down}'
+}
+myFuncMIdiOctaveUp(*) {
+    Send '+{Up}'
+}
 
-xpos2 := 30    ;; Orange
-ypos2 := 160
+myFuncMIdiOctaveDn(*) {
+    Send '+{Down}'
+}
 
-xpos3 := 30    ;; Yellow
-ypos3 := 178
+; Device Loader
+CapsLock:: {
+    KeyWait 'CapsLock'
+    if (A_ThisHotkey='CapsLock') {
+        SetCapsLockState !GetKeyState('CapsLock', 'T') ? True : False
+    }
+}
 
-xpos4 := 30    ;; Green
-ypos4 := 197
+FindPlug(name) {
+    Send '^f'
+    SendText name
+    Sleep 300
+    Send '{Down}'
+    Sleep 100
+    Send '{Enter}'
+    Sleep 500
+    if (name ~= 'VST') {
+        WinWaitNotActive('ahk_class Ableton Live Window Class')
+        WinActivate
+        Sleep 10
+        Send '{Esc}'
+    }
+    else
+        Send '{Esc}'
+}
 
-xpos5 := 30    ;; Blue
-ypos5 := 216
+myFuncLoadPlug1(*) {
+    SendEvent FindPlug(PlugName1)
+}
 
-xpos6 := 30    ;; Purple
-ypos6 := 235
+myFuncLoadPlug2(*) {
+    SendEvent FindPlug(PlugName2)
+}
 
-xpos7 := 30    ;; Gray
-ypos7 := 255
+myFuncLoadPlug3(*) {
+    SendEvent FindPlug(PlugName3)
+}
 
-F1::    ;; F1
-{
+myFuncLoadPlug4(*) {
+    SendEvent FindPlug(PlugName4)
+}
+
+myFuncLoadPlug5(*) {
+    SendEvent FindPlug(PlugName5)
+}
+
+; Quick Find Category/Collection
+myFuncCategory1(*) {
     MouseClick , xpos1, ypos1, , 0
     Sleep 10
     Send '{Right}' 
 }
 
-F2::    ;; F2
-{
+myFuncCategory2(*) {
     MouseClick , xpos2, ypos2, , 0
     Sleep 10
     Send '{Right}' 
 }
 
-F3::    ;; F3
-{
+myFuncCategory3(*) {
     MouseClick , xpos3, ypos3, , 0
     Sleep 10
     Send '{Right}' 
 }
 
-F4::    ;; F4
-{
+myFuncCategory4(*) {
     MouseClick , xpos4, ypos4, , 0
     Sleep 10
     Send '{Right}' 
 }
 
-F5::    ;; F5
-{
+myFuncCategory5(*) {
     MouseClick , xpos5, ypos5, , 0
     Sleep 10
     Send '{Right}' 
 }
 
-F6::    ;; F6
-{
+myFuncCategory6(*) {
     MouseClick , xpos6, ypos6, , 0
     Sleep 10
     Send '{Right}' 
 }
 
-F7::    ;; F7
-{
+myFuncCategory7(*) {
     MouseClick , xpos7, ypos7, , 0
     Sleep 10
     Send '{Right}' 
 }
 
-xpos8 := 30    ;; Position of Samples Folder
-ypos8 := 654
-
-F8::    ;; F8
-{
+myFuncCategory8(*) {
     MouseClick , xpos8, ypos8, , 0
 }
 
+; Swap TAB and SHIFT + TAB
+#HotIf InStr(ShiftTabToTab, 'On') && WinActive('ahk_group Ableton')
+Tab::+Tab
++Tab::Tab
 
-; --------------------------------------- SHORTCUT REPLACEMENT ---------------------------------------
-
-^+z::^y    ;; CTRL + SHIFT + [Z], Redo
-
-F12::^,    ;; F12, Open Preferences
-
-
-; --------------------------------------- KEY MAPPING MEMO ---------------------------------------
-
-/*
-[W] - Warp/Unwarp
-[e] - Lock/Unlock Envelopes
-[d] - Metronome On/Off
-[f] - Follow Playback
-[l] - Set Locator
-[C] - Capture MIDI
-[v] - Re-Enable Automation
-[M] - Mono Monitoring
-
-[~] - Solo Memo Track
-[!] - Solo Reference Track 1
-[@] - Solo Reference Track 2
-
-[\] - Open Plugin Windows
-[[] - Clip Gain, Down
-[]] - Clip Gain, Up
-[{] - Clip Pitch, Down
-[}] - Clip Pitch, Up
-
-[Numpad1] - Warp Mode, Beats
-[Numpad2] - Warp Mode, Tones
-[Numpad3] - Warp Mode, Texture
-[Numpad4] - Warp Mode, Re-Pitch
-[Numpad5] - Warp Mode, Complex
-[Numpad6] - Warp Mode, Complex Pro
-*/
-
-
-; --------------------------------------- END ---------------------------------------
+; Redo with CTRL + SHIFT + Z
+#HotIf InStr(BetterRedo, 'On') && WinActive('ahk_group Ableton')
+^+z::^y
 
 #HotIf
 
+; Auto Switch to English IME
+if InStr(EnglishIme, 'On') {
+    MapIme := Map('en', 67699721)
+    GetCurrentImeId() {
+        WinId := WinGetId('A')
+        ThreadId := DllCall('GetWindowThreadProcessId', 'UInt', WinId, 'UInt', 0)
+        InputLocaleId := DllCall('GetKeyboardLayout', 'UInt', ThreadId, 'UInt')
+        return InputLocaleId
+    }
 
-/*
-; --------------------------------------- LEGACY FEATURES ---------------------------------------
+    SetIme(ImeId) {
+        WinTitle := WinGetTitle('A')
+        PostMessage 0x50, 0, ImeId, , WinTitle     
+    }
 
-; Add Device Easily with CAPSLOCK + [AnyKey] (CapsLock will still work properly)
-CapsLock::
-{
-    KeyWait 'CapsLock'
-    if (A_ThisHotkey='CapsLock')
-    {
-        SetCapsLockState !GetKeyState('CapsLock', 'T') ? True : False
+    Loop {
+        WinWaitActive('ahk_group Ableton')    
+        CurrentWinId := WinGetId('A')
+        SetIme(MapIme['en'])
+        WinWaitNotActive(CurrentWinId)
     }
 }
-
-#HotIf GetKeyState('CapsLock', 'P')
-
-device(name)
-{
-    Send '^f'
-    Send name
-    Sleep 200
-    Send '{Down}'
-    Sleep 10
-    Send '{Enter}'
-    Sleep 100
-    Send '{Esc}'
-}
-
-; [Keyname]::Send Device('{Text}[Device Name]')
-    1::Send Device('{Text}EQ Eight')
-    2::Send Device('{Text}Compressor')
-    3::Send Device('{Text}OTT')
-    4::Send Device('{Text} ')
-    5::Send Device('{Text} ')
-    6::Send Device('{Text} ')
-    7::Send Device('{Text} ')
-    8::Send Device('{Text}-- DEVICE NAME HERE --')
-    9::Send Device('{Text} ')
-    0::Send Device('{Text} ')
-    q::Send Device('{Text} ')
-    w::Send Device('{Text}Kontakt')
-    e::Send Device('{Text}Nexus')
-    r::Send Device('{Text}Serum')
-
-#HotIf
-
-; Auto Switch to English IME when Ableton Live is Activated
-GroupAdd 'process_en', 'ahk_class Ableton Live Window Class'
-
-MapIME := Map('EN', 67699721)
-
-GetCurrentIMEID()
-{
-    WinID := WinGetID('A')
-    ThreadID := DllCall('GetWindowThreadProcessId', 'UInt', WinID, 'UInt', 0)
-    InputLocaleID := DllCall('GetKeyboardLayout', 'UInt', ThreadID, 'UInt')
-
-    return InputLocaleID
-}
-
-SetIME(IMEID)
-{
-    WinTitle := WinGetTitle('A')
-    PostMessage 0x50, 0, IMEID, , WinTitle     
-}
-
-Loop
-{
-    WinWaitActive('ahk_group process_en')    
-    CurrentWinID := WinGetID('A')
-    SetIME(MapIME['EN'])
-    WinWaitNotActive(CurrentWinID)
-}
-*/
