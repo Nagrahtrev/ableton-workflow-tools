@@ -28,22 +28,25 @@ Actually, my code so sucks... I guess no one will notice it. Just let it be a ba
 ## Features
   
 - Customizable Plugin Pop-up Menu
-- Close Activated Plugin Window
+- Close Activated VST Plugin Window
 - Left Hand Delete
+- Clear Automation/Envelope
 - Select All & Export
-- Duplicate to 8
-- Search Only VST Plugins
+- Collect All & Save
+- Duplicate/Paste to 8
+- Search VST Plugins
+- Deactivate Selected Clips
 - Create Non-looped Midi Clip
-- Put MIDI Note Easily
 - Show/Hide All Views
 - Add Automation in New Lane
 - Assign Color to Clips
-- Quick Find Categories
-- And more...
-  
-#### Legacy Features :(
-- Make `CAPSLOCK` Useful
-- Auto Switch to English IME
+- Open Preferences Window
+- Transpose MIDI Note Easily
+- Device Loader
+- Quick Find Category/Collection
+- Swap `TAB` and `SHIFT + TAB` (Optional)
+- Redo with `CTRL + SHIFT + Z` (Optional)
+- Auto Switch to English IME (Optional)
   
 ----
   
