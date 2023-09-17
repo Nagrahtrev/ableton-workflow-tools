@@ -19,22 +19,22 @@ DuplicateTo8 := '!d'  ;; Duplicate to 8
 PasteTo8 := '!v'  ;; Paste to 8
 FindVst := '^+f'  ;; Search VST Plugin
 Deactivate := 'XButton1'  ;; Deactivate Selected Clips
-NewMIdiClip := 'XButton2'  ;; Create Non-Looped MIdI Clip
-ShowHIdeAll := 'F10'  ;; Show/HIde All Views
+NewMidiClip := 'XButton2'  ;; Create Non-Looped MIDI Clip
+ShowHideAll := 'F10'  ;; Show/Hide All Views
 NewLaneEnv := '!a'  ;; Add Automation in New Lane (Mouse Keep Hovering)
 AssignColor := '!c'  ;; Assign Color to Clips (Mouse Keep Hovering)
 OpenPreferences := 'F12'  ;; Open Preferences Window
 
-; Shortcut Remapping (On/Off)
+; Optional Features (On/Off)
 ShiftTabToTab := 'On'  ;; Swap TAB and SHIFT + TAB
 BetterRedo := 'On'  ;; Redo with CTRL + SHIFT + Z
 EnglishIme := 'Off'  ;; Auto Switch to English IME (Microsoft)
 
-; Transpose MIdI Note Easily (Also Can Tweak Knob)
-MIdiNoteUp := '+WheelUp'  ;; Move Up/Increase
-MIdiNoteDn := '+WheelDown'  ;; Move Down/Decrease
-MIdiOctaveUp := '^+WheelUp'  ;; Move Up an Octave/Finer Increase
-MIdiOctaveDn := '^+WheelDown'  ;; Move Down an Octave/Finer Decrease
+; Transpose MIDI Note Easily (Also Can Tweak Knob)
+MidiNoteUp := '+WheelUp'  ;; Move Up/Increase
+MidiNoteDn := '+WheelDown'  ;; Move Down/Decrease
+MidiOctaveUp := '^+WheelUp'  ;; Move Up an Octave/Finer Increase
+MidiOctaveDn := '^+WheelDown'  ;; Move Down an Octave/Finer Decrease
 
 ; Device Loader (Use CAPSLOCK + [1 ~ 5])
 LoadPlug1 := '~Capslock & 1'
@@ -197,16 +197,16 @@ Hotkey DuplicateTo8, myFuncDuplicateTo8
 Hotkey PasteTo8, myFuncPasteTo8
 Hotkey FindVst, myFuncFindVst
 Hotkey Deactivate, myFuncDeactivate
-Hotkey NewMIdiClip, myFuncNewMIdiClip
-Hotkey ShowHIdeAll, myFuncShowHIdeAll
+Hotkey NewMidiClip, myFuncNewMidiClip
+Hotkey ShowHideAll, myFuncShowHideAll
 Hotkey NewLaneEnv, myFuncNewLaneEnv
 Hotkey AssignColor, myFuncAssignColor
 Hotkey OpenPreferences, myFuncOpenPreferences
 
-Hotkey MIdiNoteUp, myFuncMIdiNoteUp
-Hotkey MIdiNoteDn, myFuncMIdiNoteDn
-Hotkey MIdiOctaveUp, myFuncMIdiOctaveUp
-Hotkey MIdiOctaveDn, myFuncMIdiOctaveDn
+Hotkey MidiNoteUp, myFuncMidiNoteUp
+Hotkey MidiNoteDn, myFuncMidiNoteDn
+Hotkey MidiOctaveUp, myFuncMidiOctaveUp
+Hotkey MidiOctaveDn, myFuncMidiOctaveDn
 
 Hotkey LoadPlug1, myFuncLoadPlug1
 Hotkey LoadPlug2, myFuncLoadPlug2
@@ -391,15 +391,15 @@ myFuncDeactivate(*) {
     Send '{Numpad0}'
 }
 
-; Create Non-Looped MIdI Clip
-myFuncNewMIdiClip(*) {
+; Create Non-Looped MIDI Clip
+myFuncNewMidiClip(*) {
     Send '^+m'
     Sleep 10
     Send '^j'
 }
 
-; Show/HIde All Views
-myFuncShowHIdeAll(*) {
+; Show/Hide All Views
+myFuncShowHideAll(*) {
     SendEvent '^!b'
     Sleep 10
     SendEvent '^!l'
@@ -442,19 +442,19 @@ myFuncOpenPreferences(*) {
     Send '^,'
 }
 
-; Transpose MIdI Note Easily
-myFuncMIdiNoteUp(*) {
+; Transpose MIDI Note Easily
+myFuncMidiNoteUp(*) {
     Send '{Up}'
 }
 
-myFuncMIdiNoteDn(*) {
+myFuncMidiNoteDn(*) {
     Send '{Down}'
 }
-myFuncMIdiOctaveUp(*) {
+myFuncMidiOctaveUp(*) {
     Send '+{Up}'
 }
 
-myFuncMIdiOctaveDn(*) {
+myFuncMidiOctaveDn(*) {
     Send '+{Down}'
 }
 
