@@ -10,7 +10,7 @@ Language := 'English'  ;; Deutsch/English/Español/Français/Italiano/日本語/
 
 ; ↓↓↓ Change Hotkey to Suit Your Preference ↓↓↓
 ShowMenu := 'MButton'  ;; Display Plugin Popup Menu
-ClosePlug := 'Esc'  ;; Close Activated VST Plugin Window
+ClosePlug := '~Esc'  ;; Close Activated VST Plugin Window
 LeftHandDel := '``'  ;; Double Press Key to Delete
 ClearEnv := '!e'  ;; Clear Automation/Envelope
 SelectAllExport := '^+r'  ;; Select All and Export
@@ -36,7 +36,7 @@ MidiNoteDn := '+WheelDown'  ;; Move Down/Decrease
 MidiOctaveUp := '^+WheelUp'  ;; Move Up an Octave/Finer Increase
 MidiOctaveDn := '^+WheelDown'  ;; Move Down an Octave/Finer Decrease
 
-; Device Loader (Use CAPSLOCK + [1 ~ 5])
+; Device Loader (Use CAPSLOCK + [Num])
 LoadPlug1 := '~Capslock & 1'
 PlugName1 := 'EQ Eight'
 
@@ -51,6 +51,21 @@ PlugName4 := ''
 
 LoadPlug5 := '~Capslock & 5'
 PlugName5 := ''
+
+LoadPlug6 := '~Capslock & 6'
+PlugName6 := ''
+
+LoadPlug7 := '~Capslock & 7'
+PlugName7 := ''
+
+LoadPlug8 := '~Capslock & 8'
+PlugName8 := ''
+
+LoadPlug9 := '~Capslock & 9'
+PlugName9 := ''
+
+LoadPlug10 := '~Capslock & 0'
+PlugName10 := ''
 
 ; Quick Find Category/Collection
 ; Use 'AutoHotkey Window Spy' to Get Position (Relative to Window)
@@ -82,7 +97,7 @@ Category7 := 'F7'  ;; Gray
 xpos7 := 30
 ypos7 := 255
 
-Category8 := 'F8'  ;; Sample Pack Folder
+Category8 := 'F8'  ;; Sample Pack Folder, etc.
 xpos8 := 30
 ypos8 := 654
 
@@ -213,6 +228,11 @@ Hotkey LoadPlug2, myFuncLoadPlug2
 Hotkey LoadPlug3, myFuncLoadPlug3
 Hotkey LoadPlug4, myFuncLoadPlug4
 Hotkey LoadPlug5, myFuncLoadPlug5
+Hotkey LoadPlug6, myFuncLoadPlug6
+Hotkey LoadPlug7, myFuncLoadPlug7
+Hotkey LoadPlug8, myFuncLoadPlug8
+Hotkey LoadPlug9, myFuncLoadPlug9
+Hotkey LoadPlug10, myFuncLoadPlug10
 
 Hotkey Category1, myFuncCategory1
 Hotkey Category2, myFuncCategory2
@@ -307,8 +327,6 @@ myFuncClosePlug(*) {
         if RegExMatch(vst_Class, 'AbletonVstPlugClass') or RegExMatch(vst_Class, 'Vst3PlugWindow') {
 	        WinClose vst_Title 
 	    }
-        else
-            Send '{Esc}'
     }
 }
 
@@ -475,13 +493,11 @@ FindPlug(name) {
     Send '{Enter}'
     Sleep 500
     if (name ~= 'VST') {
-        WinWaitNotActive('ahk_class Ableton Live Window Class')
-        WinActivate
-        Sleep 10
-        Send '{Esc}'
+        if WinWaitNotActive('ahk_class Ableton Live Window Class')
+            WinActivate('ahk_class Ableton Live Window Class')
+            Sleep 10
     }
-    else
-        Send '{Esc}'
+    Send '{Esc}'
 }
 
 myFuncLoadPlug1(*) {
@@ -502,6 +518,26 @@ myFuncLoadPlug4(*) {
 
 myFuncLoadPlug5(*) {
     SendEvent FindPlug(PlugName5)
+}
+
+myFuncLoadPlug6(*) {
+    SendEvent FindPlug(PlugName6)
+}
+
+myFuncLoadPlug7(*) {
+    SendEvent FindPlug(PlugName7)
+}
+
+myFuncLoadPlug8(*) {
+    SendEvent FindPlug(PlugName8)
+}
+
+myFuncLoadPlug9(*) {
+    SendEvent FindPlug(PlugName9)
+}
+
+myFuncLoadPlug10(*) {
+    SendEvent FindPlug(PlugName10)
 }
 
 ; Quick Find Category/Collection
