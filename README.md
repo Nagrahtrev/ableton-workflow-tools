@@ -1,6 +1,6 @@
 <div align="center">
   
-# Ableton Live 12 Workflow Tools by nova+z
+# Ableton Live 12 Workflow Tools by Nagrahtrev
   
 ※ This script only works on AutoHotkey v2 ※
   
