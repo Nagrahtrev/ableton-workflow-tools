@@ -13,8 +13,6 @@ hmm... This is a personal self-use ahk script. It makes my workflow much more co
   
 Actually, my code so sucks... I guess no one will notice it. Just let it be a backup yup :)
   
-~~And my English sucks~~
-  
 ## How To Run
   
 1. Download & Install [AutoHotkey v2](https://www.autohotkey.com/v2/)
@@ -34,7 +32,7 @@ Actually, my code so sucks... I guess no one will notice it. Just let it be a ba
 - Clear Automation/Envelope ---- `CTRL + ~`
 - Select All & Export ---- `CTRL + SHIFT + R`
 - Collect All & Save ---- `CTRL + ALT + S`
-- Duplicate/Paste to 8 ---- `ALT + D`
+- Duplicate to 8 ---- `ALT + D`
 - Search VST Plugins  ---- `CTRL + SHIFT + F`
 - Deactivate Selected Clips  ---- `XBUTTON 1`
 - Create Non-looped Midi Clip ---- `XBUTTON 2`
@@ -44,12 +42,15 @@ Actually, my code so sucks... I guess no one will notice it. Just let it be a ba
 - Open Preferences Window ---- `F12` 
 - Locate Sidebar Label ---- `F1`
 - Transpose MIDI Notes ---- `SHIFT + MOUSEWHEEL`
+- Loop Switch ---- `F13`
+- Show/Hide Take Lanes ---- `F14`
+- (Optional) Disable Quit Shortcut
 - (Optional) Swap `TAB` and `SHIFT + TAB`
 - (Optional) Redo with `CTRL + SHIFT + Z`
 - (Optional) Clear Search Box When Using `CTRL + F`
 - (Optional) Left Hand Delete ---- Double Press `~`
 - (Optional) Auto Switch to English IME
-- (Optional) Random Name Sample Exporter ---- `ALT + S`
+- (Optional) Random Name Sample Exporter (or Timestamp) ---- `ALT + S`
 - (Optional) Get Plug-in List ---- `CTRL + SHIFT + ALT + P`
   
 ----
@@ -58,4 +59,3 @@ Anyways,
   
 Ableton Live + AutoHotKey = 最強のDAW
   
-~~(nova+zの暴言)~~
