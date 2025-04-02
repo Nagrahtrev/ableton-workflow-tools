@@ -9,9 +9,6 @@
 ;
 ; -------------------------------------------------------------------------------
 
-; ↓↓↓ Your Ableton Live Language Setting ↓↓↓
-Language := 'English'
-
 ; ↓↓↓ Change Hotkey to Suit Your Preference ↓↓↓
 ShowPluginPopupMenu := 'MButton'
 CloseVstWindow := '~Esc'
@@ -19,7 +16,6 @@ ClearAutomation := '^``'
 SelectAllNExport := '^+r'
 CollectAllNSave := '^!s'
 DuplicateTo8 := '!d'
-PasteTo8 := '!v'
 SearchVst := '^+f'
 Deactivate := 'XButton1'
 NonLoopedMidiClip := 'XButton2'
@@ -34,17 +30,22 @@ MidiNoteUp := '+WheelUp'
 MidiNoteDn := '+WheelDown'
 MidiOctaveUp := '^+WheelUp'
 MidiOctaveDn := '^+WheelDown'
+LoopSwitch := 'F13'
+ShowHideTakeLane := 'F14'
 
 ; ↓↓↓ Optional Features (On/Off) ↓↓↓
+DisableCtrlQ := 'On'
 SwapTabShiftTab := 'On'
 CtrlShiftZRedo := 'On'
-ClearSearchBox := 'On'  ;; When Using [Ctrl+F]
+ClearSearchBox := 'Off'  ;; When Using [Ctrl+F]
 LeftHandDelete := 'On'  ;; Double Press [~] Key
 AutoEnglishIme := 'Off'  ;; ※ Microsoft English(US) IME
 
-RandomNameSampleExporter := 'On'  ;; Select a Range of Time First
-RandomNameSampleExporterShortcut := '!s'
+RandomNameSampleExporter := 'Off'  ;; Export Manually Once to Remember the Save Location
+RandomNameSampleExporterShortcut := '!s'  ;; !!!Select a Range of Time First!!!
 RandomNameLength := 6
+RandomNameChangeIntoDatetime := 'Off'
+DatetimeFormat := 'yyMMdd_HHmmss'
 
 GetPluginList := 'Off' ; ※※※ Requires Python 3 & Add Python to PATH ※※※ 
 GetPluginListShortcut := '^+!p'
@@ -178,7 +179,6 @@ Hotkey ClearAutomation, myFuncClearAutomation
 Hotkey SelectAllNExport, myFuncSelectAllNExport
 Hotkey CollectAllNSave, myFuncCollectAllNSave
 Hotkey DuplicateTo8, myFuncDuplicateTo8
-Hotkey PasteTo8, myFuncPasteTo8
 Hotkey SearchVst, myFuncSearchVst
 Hotkey Deactivate, myFuncDeactivate
 Hotkey NonLoopedMidiClip, myFuncNonLoopedMidiClip
@@ -191,6 +191,8 @@ Hotkey MidiNoteUp, myFuncMidiNoteUp
 Hotkey MidiNoteDn, myFuncMidiNoteDn
 Hotkey MidiOctaveUp, myFuncMidiOctaveUp
 Hotkey MidiOctaveDn, myFuncMidiOctaveDn
+Hotkey LoopSwitch, MyFuncLoopSwitch
+Hotkey ShowHideTakeLane, myFuncShowHideTakeLane
 Hotkey RandomNameSampleExporterShortcut, myFuncRandomNameSampleExporterShortcut
 HotIfWinActive
 Hotkey GetPluginListShortcut, myFuncGetPluginListShortcut
@@ -304,10 +306,10 @@ category(*) {
 
 myFuncCloseVstWindow(*) {
     VstClass := WinGetClass('A')
-    VstTitle := WinGetTitle('A')
     SetTitleMatchMode 3
     if InStr(vstClass, 'AbletonVstPlugClass') or InStr(vstClass, 'Vst3PlugWindow')
-            WinClose    
+        WinClose
+    SetTitleMatchMode 2
 }
 
 myFuncClearAutomation(*) {
@@ -321,37 +323,10 @@ myFuncSelectAllNExport(*){
 }
 
 myFuncCollectAllNSave(*) {
-    myLanguange := Language
-    if InStr(myLanguange, 'English') {
-        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Collect all and save'
-    }
-    else if InStr(myLanguange, 'Deutsch') or InStr(myLanguange, 'German') {
-        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Alles sammeln und sichern'
-    }
-    else if InStr(myLanguange, 'Español') or InStr(myLanguange, 'Spanish') {
-        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Recopilar todo y guardar'
-    }
-    else if InStr(myLanguange, 'Français') or InStr(myLanguange, 'French') {
-        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Réunir et sauvegarder'
-    }
-    else if InStr(myLanguange, 'Italian') {
-        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'Raccogli tutto e Salva'
-    }
-    else if InStr(myLanguange, '日本語') or InStr(myLanguange, 'Japanese') {
-        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', 'すべてを集めて保存'
-    }
-    else if InStr(myLanguange, '中文') or InStr(myLanguange, 'Chinese') {
-        MenuSelect 'ahk_class Ableton Live Window Class', , '1&', '全部收集并保存'
-    }
+    MenuSelect 'ahk_class Ableton Live Window Class', , '1&', '15&'
 }
 
 myFuncDuplicateTo8(*) {
-    Send '^{d 7}'
-}
-
-myFuncPasteTo8(*) {
-    Send '^v'
-    Sleep 10
     Send '^{d 7}'
 }
 
@@ -412,6 +387,17 @@ myFuncMidiOctaveDn(*) {
     Send '+{Down}'
 }
 
+MyFuncLoopSwitch(*) {
+    Send '^l'
+}
+
+myFuncShowHideTakeLane(*) {
+    SendEvent '^!u'
+}
+
+#HotIf InStr(DisableCtrlQ, 'On') && WinActive('ahk_group Ableton')
+^q::return
+
 #HotIf InStr(SwapTabShiftTab, 'On') && WinActive('ahk_group Ableton')
 Tab::+Tab
 +Tab::Tab
@@ -447,25 +433,29 @@ if InStr(AutoEnglishIme, 'On') {
 
 myFuncRandomNameSampleExporterShortcut(*) {
     if InStr(RandomNameSampleExporter, 'On') {
-        chars := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-        charlen := StrLen(chars)
-        rndname(len) {
-            Loop len {
-            rnd := Random(1, charlen)
-            string .= SubStr(chars, rnd, 1)
-            }
-            Return string
-        }
         Send '^l'
-        Sleep 10
+        Sleep 50
         Send '^+l'
-        Sleep 10
+        Sleep 50
         Send '^+r'
         Sleep 200
         Send '{Enter}'
-        Sleep 200
-        Send rndname(RandomNameLength)
-        Sleep 200
+        Sleep 500
+        if InStr(RandomNameChangeIntoDatetime, 'Off') {
+            chars := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+            charlen := StrLen(chars)
+            rndname(len) {
+                Loop len {
+                rnd := Random(1, charlen)
+                string .= SubStr(chars, rnd, 1)
+                }
+                Return string
+            }
+            Send rndname(RandomNameLength)
+        }
+        else if InStr(RandomNameChangeIntoDatetime, 'On')
+            SendInput FormatTime( , DatetimeFormat)
+        Sleep 500
         Send '{Enter}'
     }
 }
