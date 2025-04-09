@@ -5,7 +5,7 @@
 #    - Indent with 4 spaces per level (use the "TAB" key)
 # 
 # 2. Item Format:
-#    [TYPE] : [SEARCH NAME]
+#    [TYPE] : [DISPLAY NAME IN LIVE BROWSER]
 #    - TYPE prefixes (case-sensitive):
 #        S = Stock (Ableton built-in)
 #        R = Rack
