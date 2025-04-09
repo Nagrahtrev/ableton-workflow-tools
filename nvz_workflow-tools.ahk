@@ -1,475 +1,547 @@
-; ※※※ THIS SCRIPT REQUIRES AUTOHOTKEY V2 ※※※
-; <Tray Icon Menu> → <Documentation> to Visit AHK Official Documentation
-
-; -------------------------------------------------------------------------------
-;
-;
-;       === Ableton Live 12 Workflow Tools by nova+z (aka. Nagrahtrev) ===
-;
-;
-; -------------------------------------------------------------------------------
-
-; ↓↓↓ Change Hotkey to Suit Your Preference ↓↓↓
-ShowPluginPopupMenu := 'MButton'
-CloseVstWindow := '~Esc'
-ClearAutomation := '^``'
-SelectAllNExport := '^+r'
-CollectAllNSave := '^!s'
-DuplicateTo8 := '!d'
-SearchVst := '^+f'
-Deactivate := 'XButton1'
-NonLoopedMidiClip := 'XButton2'
-CreateXFade := '!f'
-NewLaneAutomation := '!a'  ;; ※ Mouse Keep Hovering
-AssignTrackColor := '!c'  ;; ※ Mouse Keep Hovering
-OpenPreferences := 'F12'
-LocateSidebarLabel := 'F1'  ;; <Tray Icon Menu> → <Window Spy> → <Mouse Position> → <Window>
-    Xpos := 30
-    Ypos := 150
-MidiNoteUp := '+WheelUp'
-MidiNoteDn := '+WheelDown'
-MidiOctaveUp := '^+WheelUp'
-MidiOctaveDn := '^+WheelDown'
-LoopSwitch := 'F13'
-ShowHideTakeLane := 'F14'
-
-; ↓↓↓ Optional Features (On/Off) ↓↓↓
-DisableCtrlQ := 'On'
-SwapTabShiftTab := 'On'
-CtrlShiftZRedo := 'On'
-ClearSearchBox := 'Off'  ;; When Using [Ctrl+F]
-LeftHandDelete := 'On'  ;; Double Press [~] Key
-AutoEnglishIme := 'Off'  ;; ※ Microsoft English(US) IME
-
-RandomNameSampleExporter := 'Off'  ;; Export Manually Once to Remember the Save Location
-RandomNameSampleExporterShortcut := '!s'  ;; !!!Select a Range of Time First!!!
-RandomNameLength := 6
-RandomNameChangeIntoDatetime := 'Off'
-DatetimeFormat := 'yyMMdd_HHmmss'
-
-GetPluginList := 'Off' ; ※※※ Requires Python 3 & Add Python to PATH ※※※ 
-GetPluginListShortcut := '^+!p'
-
-; ↓↓↓ Popup Menu Customization ↓↓↓
-MainMenu := Menu()
-;------------------------------------------------------;
-;             menuitem                                 ;
-;           /            menuitem                      ;
-;          /           /                               ;
-; MainMenu -- SubMenu1 -- SubMenu1_1                   ;
-;          \             menuitem                      ;
-;           \          /                               ;
-;             SubMenu2 -- SubMenu2_1                   ;
-;                      \                               ;
-;                       SubMenu2_2 -- SubMenu2_2_1     ;
-;                                  \                   ;
-;                                    SubMenu2_2_2...   ;
-;                                                      ;
-;              Level 1     Level 2     Level 3         ;
-;------------------------------------------------------;
-
-; ↓↓↓ Add Menu Items Here ↓↓↓
-; <<< FORMAT >>> : CURRENT MENU.Add 'DISPLAY NAME IN LIVE BROWSER', DEVICE TYPE(ableton/vst/vst3/preset/rack/max)
-MainMenu.Add 'Utility', ableton
-MainMenu.Add '-- ADD ITEM HERE --', vst
-
-MainMenu.Add  ;; Separator Line
-
-; --------------------------------------------------------------
-
-; ↓↓↓ Create Multi-Level Menus ↓↓↓
-; <<< FORMAT >>> : PARENT MENU.Add "CATEGORY NAME", CURRENT MENU
-SubMenu1 := Menu()
-MainMenu.Add 'EQ', SubMenu1
-
-; ↓↓↓ Add Sub Menu Items Here ↓↓↓
-SubMenu1.Add 'EQ Eight', ableton
-SubMenu1.Add 'Fabfilter Pro-Q 3', vst
-SubMenu1.Add '-- ADD ITEM HERE --', ableton
-
-SubMenu1.Add  ;; Separator Line
-
-; --------------------------------------------------------------
-
-; ↓↓↓ Create Extra Level of Sub Menu ↓↓↓
-SubMenu1_1 := Menu()
-SubMenu1.Add 'Filter', SubMenu1_1
-
-SubMenu1_1.Add 'Auto Filter', ableton
-SubMenu1_1.Add '-- ADD ITEM HERE--', rack
-
-; --------------------------------------------------------------
-
-SubMenu2 := Menu()
-MainMenu.Add 'Compressor', SubMenu2
-
-SubMenu2.Add 'Glue Compressor', ableton
-SubMenu2.Add 'Fabfilter Pro-C 2', vst
-
-SubMenu2.Add
-
-; --------------------------------------------------------------
-
-SubMenu2_1 := Menu()
-SubMenu2.Add 'Analog', SubMenu2_1
-
-SubMenu2_1.Add 'API-2500 Stereo', vst3
-SubMenu2_1.Add 'CLA-2A Mono', vst3
-
-; --------------------------------------------------------------
-
-SubMenu2_2 := Menu()
-SubMenu2.Add 'Multiband', SubMenu2_2
-
-SubMenu2_2.Add 'OTT', preset
-SubMenu2_2.Add 'Fabfilter Pro-MB', vst
-
-; --------------------------------------------------------------
-
-; ↓↓↓ Back to Main Menu ↓↓↓
-MainMenu.Add  ;; Separator Line
-
-; ↓↓↓ Add Disabled (Gray Color) Menu Item to Categorize Following Items ↓↓↓
-MainMenu.Add '------ Tools ------', category
-MainMenu.Disable '------ Tools ------'
-
-MainMenu.Add 'Velocity', ableton
-MainMenu.Add 'Arpeggiator', ableton
-
 ; -------------------------------------------------------------------------------
 ;
 ;
 ;
-;                            ※※※ DON'T TOUCH ※※※
+;                           ==== SCRIPT SETTINGS ====
 ;
 ;
 ;
 ; -------------------------------------------------------------------------------
 
-; ---- Script Settings ----
+#Include HotkeyRegistrations.ahk
+
+#Requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir
 InstallKeybdHook
 #UseHook
 #SingleInstance force
 #MaxThreadsPerHotkey 2
 #SuspendExempt
-RShift & F11::Reload
-RShift & F12::Suspend
+; RShift & F9::Run "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\AutoHotkey Window Spy.lnk"
+; RShift & F10::Pause
+; RShift & F11::Reload
+; RShift & F12::Suspend
 #SuspendExempt False
-CoordMode 'Mouse', 'Window'
+CoordMode "Mouse", "Window"
 
-A_TrayMenu.Insert('&Window Spy', 'List of Keys', keylist)
-A_TrayMenu.Insert('&Window Spy', 'Documentation', doc)
-A_TrayMenu.Insert('&Window Spy')
-keylist(*) {
-    Run 'https://www.autohotkey.com/docs/v2/KeyList.htm'
-}
-doc(*) {
-    Run 'https://www.autohotkey.com/docs/v2/'
+A_TrayMenu.Insert("&Window Spy", "List of Keys", keylist)
+A_TrayMenu.Insert("&Window Spy", "Documentation", doc)
+A_TrayMenu.Insert("&Window Spy")
+
+keylist(*)
+{
+    Run "https://www.autohotkey.com/docs/v2/KeyList.htm"
 }
 
-; ---- Register Hotkeys ----
-GroupAdd 'Ableton', 'ahk_class Ableton Live Window Class'
-GroupAdd 'Ableton', 'ahk_class AbletonVstPlugClass'
-GroupAdd 'Ableton', 'ahk_class Vst3PlugWindow'
-HotIfWinActive('ahk_group Ableton')
-Hotkey ShowPluginPopupMenu, myFuncShowPluginPopupMenu
-Hotkey CloseVstWindow, myFuncCloseVstWindow
-Hotkey ClearAutomation, myFuncClearAutomation
-Hotkey SelectAllNExport, myFuncSelectAllNExport
-Hotkey CollectAllNSave, myFuncCollectAllNSave
-Hotkey DuplicateTo8, myFuncDuplicateTo8
-Hotkey SearchVst, myFuncSearchVst
-Hotkey Deactivate, myFuncDeactivate
-Hotkey NonLoopedMidiClip, myFuncNonLoopedMidiClip
-Hotkey CreateXFade, myFuncCreateXFade
-Hotkey NewLaneAutomation, myFuncNewLaneAutomation
-Hotkey AssignTrackColor, myFuncAssignTrackColor
-Hotkey OpenPreferences, myFuncOpenPreferences
-Hotkey LocateSidebarLabel, myFuncLocateSidebarLabel
-Hotkey MidiNoteUp, myFuncMidiNoteUp
-Hotkey MidiNoteDn, myFuncMidiNoteDn
-Hotkey MidiOctaveUp, myFuncMidiOctaveUp
-Hotkey MidiOctaveDn, myFuncMidiOctaveDn
-Hotkey LoopSwitch, MyFuncLoopSwitch
-Hotkey ShowHideTakeLane, myFuncShowHideTakeLane
-Hotkey RandomNameSampleExporterShortcut, myFuncRandomNameSampleExporterShortcut
-HotIfWinActive
-Hotkey GetPluginListShortcut, myFuncGetPluginListShortcut
+doc(*)
+{
+    Run "https://www.autohotkey.com/docs/v2/"
+}
+
+GroupAdd "Ableton", "ahk_class Ableton Live Window Class"
+GroupAdd "Ableton", "ahk_class AbletonVstPlugClass"
+GroupAdd "Ableton", "ahk_class Vst3PlugWindow"
+
+RegisterHotkeys()
 
 ; -------------------------------------------------------------------------------
 ;
 ;
 ;
-;                               ==== START ====
+;                             ==== MENU BUILDER ====
 ;
 ;
 ;
 ; -------------------------------------------------------------------------------
 
-myFuncShowPluginPopupMenu(*) {
-    MainMenu.Show
+menuText := FileRead(A_ScriptDir "\MenuConfig.txt")
+myMenu := CreateMenuFromFile(menuText)
+
+CreateMenuFromFile(configText)
+{
+    mainMenu := Menu()
+    menuStack := [mainMenu]
+    currentLevel := 0
+
+    Loop parse, configText, "`n", "`r"
+        {
+        line := Trim(A_LoopField)
+
+        if (line == "" or SubStr(line, 1, 1) == "#")
+            continue
+        
+        indent := (StrLen(A_LoopField) - StrLen(LTrim(A_LoopField))) // 4
+
+        if (indent > currentLevel + 1)
+            Throw Error("Invalid indentation level at line " A_Index " (Current Level: " currentLevel ", Target Level: " indent ")")
+        
+        while (indent < currentLevel)
+        {
+            menuStack.Pop()
+            currentLevel--
+        }
+        
+        isSubmenu := SubStr(line, -1) == ">"
+
+        if isSubmenu
+        {
+            subName := Trim(SubStr(line, 1, -1))
+            subMenu := Menu()
+            menuStack[-1].Add(subName, subMenu)
+            menuStack.Push(subMenu)
+            currentLevel++
+            continue
+        }
+        
+        if RegExMatch(line, "(.*):(.*)", &match)
+        {
+            handler := Trim(match[1])
+            name := Trim(match[2])
+        } 
+        else
+        {
+            handler := ""
+            name := Trim(line)
+        }
+        
+        if (handler == "C")
+        {
+            menuStack[-1].Add(name, (*) => 0)
+            menuStack[-1].Disable(name)
+            menuStack[-1].SetIcon(name, "Shell32.dll", 44)
+            continue
+        }
+        
+        if (isSubmenu)
+        {
+            ;; Done
+        }
+        else if (handler = "C")
+        {
+            ;; Done
+        }
+        else
+        {
+            callback := handler ? MenuHandler.Bind(handler, name) : (*) => ""
+            menuStack[-1].Add(name, callback)
+        }
+    }
+
+    return mainMenu
 }
 
-ableton(item_ableton, *) {
-    Send '^f'
-    SendText item_ableton
-    Sleep 800
-    Send '{Down}'
-    Sleep 100
-    Send '{Enter}'
-    Sleep 500
-    Send '{Esc}'
-}
-ableton_2(item_ableton_2, *) {
-    Send '^f'
-    SendText item_ableton_2
-    Sleep 800
-    Send '{Down 2}'
-    Sleep 100
-    Send '{Enter}'
-    Sleep 500
-    Send '{Esc}'
-}
-rack(item_rack, *) {
-    Send '^f'
-    SendText 'adg ""'
-    Sleep 10
-    Send '{Left}'
-    SendText item_rack
-    Sleep 800
-    Send '{Down}'
-    Sleep 100
-    Send '{Enter}'
-    Sleep 500
-    Send '{Esc}'
-}
-preset(item_preset, *) {
-    Send '^f'
-    SendText 'adv ""'
-    Sleep 10
-    Send '{Left}'
-    SendText item_preset
-    Sleep 800
-    Send '{Down}'
-    Sleep 100
-    Send '{Enter}'
-    Sleep 500
-    Send '{Esc}'
-}
-max(item_max, *) {
-    Send '^f'
-    SendText 'amxd ""'
-    Sleep 10
-    Send '{Left}'
-    SendText item_max
-    Sleep 800
-    Send '{Down}'
-    Sleep 100
-    Send '{Enter}'
-    Sleep 500
-    Send '{Esc}'
-}
-vst(item_vst, *) {
-    Send '^f'
-    SendText 'vst ""'
-    Sleep 10
-    Send '{Left}'
-    SendText item_vst
-    Sleep 800
-    Send '{Down}'
-    Sleep 100
-    Send '{Enter}'
-    if WinWaitNotActive('ahk_class Ableton Live Window Class')
-        WinActivate
-    Sleep 100
-    Send '{Esc}'
-}
-vst3(item_vst3, *) {
-    Send '^f'
-    SendText 'vst3 ""'
-    Sleep 10
-    Send '{Left}'
-    SendText item_vst3
-    Sleep 800
-    Send '{Down}'
-    Sleep 100
-    Send '{Enter}'
-    if WinWaitNotActive('ahk_class Ableton Live Window Class')
-        WinActivate
-    Sleep 100
-    Send '{Esc}'
-}
-category(*) {
-    MsgBox "Why don't u just disable it bro...?"
+MenuHandler(handler, name, *)
+{
+    switch handler
+    {
+        case "S": stock(name)
+        case "S2": stock2(name)
+        case "R": rack(name)
+        case "P": preset(name)
+        case "M": max(name)
+        case "2": vst2(name)
+        case "3": vst3(name)
+        case "?": eg(name)
+        case "???": omgitis(name)
+    }
 }
 
-myFuncCloseVstWindow(*) {
-    VstClass := WinGetClass('A')
+stock(itemName)
+{
+    Send "^f"
+    Sleep 50
+    SendText itemName
+    Sleep 800
+    Send "{Down}"
+    Sleep 100
+    Send "{Enter}"
+    Sleep 500
+    Send "{Esc}"
+}
+
+stock2(itemName)
+{
+    Send "^f"
+    Sleep 50
+    SendText itemName
+    Sleep 800
+    Send "{Down}"
+    Sleep 100
+    Send "{Down}"    
+    Sleep 100
+    Send "{Enter}"
+    Sleep 500
+    Send "{Esc}"
+}
+
+rack(itemName)
+{
+    Send "^f"
+    Sleep 50
+    SendText "adg `"`""
+    Sleep 10
+    Send "{Left}"
+    SendText itemName
+    Sleep 800
+    Send "{Down}"
+    Sleep 100
+    Send "{Enter}"
+    Sleep 500
+    Send "{Esc}"
+}
+
+preset(itemName)
+{
+    Send "^f"
+    Sleep 50
+    SendText "adv `"`""
+    Sleep 10
+    Send "{Left}"
+    SendText itemName
+    Sleep 800
+    Send "{Down}"
+    Sleep 100
+    Send "{Enter}"
+    Sleep 500
+    Send "{Esc}"
+}
+
+max(itemName)
+{
+    Send "^f"
+    Sleep 50
+    SendText "amxd `"`""
+    Sleep 10
+    Send "{Left}"
+    SendText itemName
+    Sleep 800
+    Send "{Down}"
+    Sleep 100
+    Send "{Enter}"
+    Sleep 500
+    Send "{Esc}"
+}
+
+vst2(itemName)
+{
+    Send "^f"
+    Sleep 50
+    SendText "vst `"`""
+    Sleep 10
+    Send "{Left}"
+    SendText itemName
+    Sleep 800
+    Send "{Down}"
+    Sleep 100
+    Send "{Enter}"
+    if WinWaitNotActive("ahk_class Ableton Live Window Class")
+        WinActivate
+    Sleep 100
+    Send "{Esc}"
+}
+
+vst3(itemName)
+{
+    Send "^f"
+    Sleep 50
+    SendText "vst3 `"`""
+    Sleep 10
+    Send "{Left}"
+    SendText itemName
+    Sleep 800
+    Send "{Down}"
+    Sleep 100
+    Send "{Enter}"
+    if WinWaitNotActive("ahk_class Ableton Live Window Class")
+        WinActivate
+    Sleep 100
+    Send "{Esc}"
+}
+
+eg(*)
+{
+    MsgBox "You selected an example item."
+}
+
+omgitis(*)
+{
+    Result := MsgBox("*", "*", "YesNo")
+    if Result = "Yes"
+    {
+        Result := MsgBox("IS THIS YOUR ASSHOLE?", "*", "YesNo")
+        if Result = "Yes"
+            MsgBox("BOOM💥", "💥")
+        else
+            MsgBox("YOU'RE RIGHT, IT'S MINE.", ":(")
+    }
+    else
+    {
+        Result := MsgBox("***", "***", "YesNo")
+        if Result = "Yes"
+            MsgBox("SAN-BAI ASSHOLE💥💥💥", "💥💥💥")
+        else
+            MsgBox("YOU SEE SEE YOU, ONE DAY DAY, JUST KNOW NO NO NO!", ">:(")
+    }
+}
+
+; -------------------------------------------------------------------------------
+;
+;
+;
+;                            ==== HOTKEY ACTIONS ====
+;
+;
+;
+; -------------------------------------------------------------------------------
+
+MyFuncShowPluginPopupMenu(*)
+{
+    myMenu.Show()
+}
+
+MyFuncCloseVstWindow(*)
+{
+    vstClass := WinGetClass("A")
     SetTitleMatchMode 3
-    if InStr(vstClass, 'AbletonVstPlugClass') or InStr(vstClass, 'Vst3PlugWindow')
+    if InStr(vstClass, "AbletonVstPlugClass") or InStr(vstClass, "Vst3PlugWindow")
         WinClose
     SetTitleMatchMode 2
 }
 
-myFuncClearAutomation(*) {
-        Send '^{BackSpace}'
+MyFuncClearAutomation(*)
+{
+    Send "^{BackSpace}"
 }
 
-myFuncSelectAllNExport(*){
-    Send '^+l'
+MyFuncSelectAllNExport(*)
+{
+    Send "^+l"
     Sleep 100
-    Send '^+r'
+    Send "^+r"
 }
 
-myFuncCollectAllNSave(*) {
-    MenuSelect 'ahk_class Ableton Live Window Class', , '1&', '15&'
+MyFuncCollectAllNSave(*)
+{
+    MenuSelect "ahk_class Ableton Live Window Class", , "1&", "15&"
 }
 
-myFuncDuplicateTo8(*) {
-    Send '^{d 7}'
+MyFuncDuplicateTo8(*)
+{
+    Send "^{d 7}"
 }
 
-myFuncSearchVst(*) {
-    Send '^f'
+MyFuncSearchVst(*)
+{
+    Send "^f"
     Sleep 10
-    SendText 'vst '
+    SendText "vst "
 }
 
-myFuncDeactivate(*) {
-    Send '{0}'
+MyFuncDeactivate(*)
+{
+    Send "{0}"
 }
 
-myFuncNonLoopedMidiClip(*) {
-    Send '^+m'
+MyFuncNonLoopedMidiClip(*)
+{
+    Send "^+m"
     Sleep 10
-    Send '^j'
+    Send "^j"
 }
 
-myFuncCreateXFade(*) {
-    SendEvent '^!f'
+MyFuncCreateXFade(*)
+{
+    SendEvent "^!f"
 }
 
-myFuncNewLaneAutomation(*) {
-    Send '{RButton}'
+MyFuncMaximizePianoRoll(*)
+{
+    SendEvent "^!e"  
+}
+
+MyFuncNewLaneAutomation(*)
+{
+    Send "{RButton}"
     Sleep 10
-    Send '{Down 2}'
-    Send '{Enter}'
+    Send "{Down 2}"
+    Send "{Enter}"
 }
 
-myFuncAssignTrackColor(*) {
-    Send '{RButton}'
+MyFuncAssignTrackColor(*)
+{
+    Send "{RButton}"
     Sleep 10
-    Send '{Up 3}'
-    Send '{Enter}'
+    Send "{Up 3}"
+    Send "{Enter}"
 }
 
-myFuncOpenPreferences(*) {
-    Send '^,'
+MyFuncOpenPreferences(*)
+{
+    Send "^,"
 }
 
-myFuncLocateSidebarLabel(*) {
+MyFuncLocateSidebarLabel(*)
+{
     MouseClick , Xpos, Ypos, , 0
     Sleep 10
-    Send '{Right}' 
+    Send "{Right}" 
 }
 
-myFuncMidiNoteUp(*) {
-    Send '{Up}'
-}
-myFuncMidiNoteDn(*) {
-    Send '{Down}'
-}
-myFuncMidiOctaveUp(*) {
-    Send '+{Up}'
-}
-myFuncMidiOctaveDn(*) {
-    Send '+{Down}'
+MyFuncMidiNoteUp(*)
+{
+    Send "{Up}"
 }
 
-MyFuncLoopSwitch(*) {
-    Send '^l'
+MyFuncMidiNoteDn(*)
+{
+    Send "{Down}"
 }
 
-myFuncShowHideTakeLane(*) {
-    SendEvent '^!u'
+MyFuncMidiOctaveUp(*)
+{
+    Send "+{Up}"
 }
 
-#HotIf InStr(DisableCtrlQ, 'On') && WinActive('ahk_group Ableton')
-^q::return
-
-#HotIf InStr(SwapTabShiftTab, 'On') && WinActive('ahk_group Ableton')
-Tab::+Tab
-+Tab::Tab
-
-#HotIf InStr(CtrlShiftZRedo, 'On') && WinActive('ahk_group Ableton')
-^+z::^y
-
-#HotIf InStr(ClearSearchBox, 'On') && WinActive('ahk_group Ableton')
-^f:: {
-    Send '^f'
-    Sleep 10
-    Send '{BackSpace}'
+MyFuncMidiOctaveDn(*)
+{
+    Send "+{Down}"
 }
 
-#HotIf InStr(LeftHandDelete, 'On') && WinActive('ahk_group Ableton')
-~`:: {
-    A_HotkeyInterval := 200
-    if (A_PriorHotkey = ThisHotkey && A_TimeSincePriorHotkey < A_HotkeyInterval)
-        Send '{Del}'
+MyFuncLoopSwitch(*)
+{
+    Send "^l"
+}
+
+MyFuncShowHideTakeLane(*)
+{
+    SendEvent "^!u"
+}
+
+#HotIf WinActive("ahk_group Ableton")
+
+if InStr(DisableCtrlQ, "On")
+{
+    ^q::return
+}
+
+if InStr(SwapTabShiftTab, "On")
+{
+    +Tab::Tab
+    Tab::+Tab
+}
+
+if InStr(CtrlShiftZRedo, "On")
+{
+    ^+z::^y
+}
+
+if InStr(ClearSearchBox, "On")
+{
+    ^f::
+    {
+        Send "^f"
+        Sleep 10
+        Send "{BackSpace}"
+    }
+}
+
+if InStr(LeftHandDelete, "On")
+{
+    ~`::
+    {
+        A_HotkeyInterval := 200
+        if (A_PriorHotkey = ThisHotkey && A_TimeSincePriorHotkey < A_HotkeyInterval)
+            Send "{Del}"
+    }
 }
 
 #HotIf
 
-if InStr(AutoEnglishIme, 'On') {
-    Loop {
-        WinWaitActive('ahk_group Ableton')    
-        ActiveId := WinGetId('A')
-        WinTitle := WinGetTitle('A')
-        PostMessage 0x50, 0, 67699721, , WinTitle
-        WinWaitNotActive(ActiveId)
+if InStr(AutoEnglishIme, "On")
+{
+    Loop
+    {
+        try
+        {
+            if WinWaitActive("ahk_group Ableton", , 0.5)
+            {
+                activeHwnd := WinGetID("A")
+                PostMessage 0x50, 0, 67699721, , activeHwnd
+                Sleep 500
+            }
+            WinWaitNotActive("ahk_group Ableton")
+        }
+        catch
+            Sleep 500
     }
 }
 
-myFuncRandomNameSampleExporterShortcut(*) {
-    if InStr(RandomNameSampleExporter, 'On') {
-        Send '^l'
+MyFuncRandomNameSampleExporterShortcut(*)
+{
+    if InStr(RandomNameSampleExporter, "On")
+    {
+        Send "^l"
         Sleep 50
-        Send '^+l'
+        Send "^+l"
         Sleep 50
-        Send '^+r'
+        Send "^+r"
         Sleep 200
-        Send '{Enter}'
+        Send "{Enter}"
         Sleep 500
-        if InStr(RandomNameChangeIntoDatetime, 'Off') {
+
+        if InStr(RandomNameChangeIntoDatetime, "Off")
+        {
             chars := "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-            charlen := StrLen(chars)
-            rndname(len) {
-                Loop len {
-                rnd := Random(1, charlen)
+            charLen := StrLen(chars)
+            RndName(len)
+            {
+                Loop len
+                {
+                rnd := Random(1, charLen)
                 string .= SubStr(chars, rnd, 1)
                 }
                 Return string
             }
-            Send rndname(RandomNameLength)
+            Send RndName(RandomNameLength)
         }
-        else if InStr(RandomNameChangeIntoDatetime, 'On')
+        else if InStr(RandomNameChangeIntoDatetime, "On")
             SendInput FormatTime( , DatetimeFormat)
+
         Sleep 500
-        Send '{Enter}'
+        Send "{Enter}"
     }
 }
 
-myFuncGetPluginListShortcut(*) {
-    if InStr(GetPluginList, 'On') {
-        Run 'python "get-plug-list.py"'
-        WinWaitActive('ahk_exe python.exe')
-        WinWaitClose('ahk_exe python.exe')
-        Contents := FileRead('mypluglist.txt')
-        Contents := Sort(Contents)
-        TimeString := FormatTime(, 'yyyy-MM-dd_HH-mm-ss')
-        FileDelete 'mypluglist.txt'
-        FileAppend Contents, 'mypluglist_' TimeString '.txt'
-        Run 'mypluglist_' TimeString '.txt'
+MyFuncGetPluginListShortcut(*)
+{
+    if InStr(GetPluginList, "On")
+    {
+        Run "python `"get-plug-list.py`""
+        if WinWait("ahk_exe python.exe")
+            WinWaitClose
+
+        latestFile := ""
+        latestTime := 0
+        targetDir := A_ScriptDir
+
+        Loop Files targetDir "\*.txt"
+        {
+            if RegExMatch(A_LoopFileName, "^mypluglist_.+\.txt$")
+            {
+                currentTime := A_LoopFileTimeCreated
+                if (currentTime == "")
+                    continue
+                if (currentTime > latestTime)
+                {
+                    latestTime := currentTime
+                    latestFile := A_LoopFileFullPath
+                }
+            }
+        }
+
+        if FileExist(latestFile)
+            Run '"' latestFile '"'
+        else
+            MsgBox "No matching files found."
     }
 }
