@@ -459,20 +459,39 @@ if InStr(LeftHandDelete, "On")
 
 if InStr(AutoEnglishIme, "On")
 {
-    Loop
+    enIME := 0x4090409
+    defaultIME := 0
+    currentIME := defaultIME
+
+    SetTimer CheckAbletonFocus, 500
+    CheckAbletonFocus()
     {
+        global currentIME, defaultIME
         try
         {
-            if WinWaitActive("ahk_group Ableton", , 0.5)
+            if WinActive("ahk_group Ableton")
             {
-                activeHwnd := WinGetID("A")
-                PostMessage 0x50, 0, 67699721, , activeHwnd
-                Sleep 500
+                if (currentIME != enIME)
+                {
+                    activeHwnd := WinGetID("A")
+                    PostMessage(0x50, 0, enIME, , activeHwnd)
+                    currentIME := enIME
+                }
+            } 
+            else
+            {
+                if (currentIME != defaultIME)
+                {
+                    activeHwnd := WinGetID("A")
+                    PostMessage(0x50, 0, defaultIME, , activeHwnd)
+                    currentIME := defaultIME
+                }
             }
-            WinWaitNotActive("ahk_group Ableton")
         }
         catch
+        {
             Sleep 500
+        }
     }
 }
 
