@@ -80,6 +80,12 @@ CreateMenuFromFile(configText)
             menuStack.Pop()
             currentLevel--
         }
+
+        if RegExMatch(line, "^-+$")
+        {
+            menuStack[-1].Add()
+            continue
+        }
         
         isSubmenu := SubStr(line, -1) == ">"
 
