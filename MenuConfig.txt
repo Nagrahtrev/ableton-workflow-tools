@@ -8,13 +8,19 @@
 # 2. Item Format:
 #    [TYPE] : [DISPLAY NAME IN LIVE BROWSER]
 #    - TYPE prefixes (case-sensitive):
-#        S = Stock (Ableton built-in)
-#        R = Rack
-#        P = Preset
-#        M = Max Device
-#        2 = VST2 Plugin
-#        3 = VST3 Plugin
-#        C = Category Label (non-clickable)
+#          S = Stock (Ableton built-in)
+#          R = Rack
+#          P = Preset
+#          M = Max Device
+#          2 = VST2 Plugin
+#          3 = VST3 Plugin
+#          C = Category Label (non-clickable)
+#
+#    - If search results aren't in the expected order (e.g. "Limiter" appears after "Color Limiter")
+#      add a number after the type letter to specify the position, Examples:
+#          S2 = 2nd Stock result
+#          R5 = 5th Rack result
+#      Note: Doesn't work for VST2/3, this rarely happens - if needed, try sandwiching the manufacturer name before your menu item
 # 
 # 3. Special Rules:
 #    - Lines starting with `#` are comments
