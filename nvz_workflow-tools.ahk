@@ -9,6 +9,7 @@
 ; -------------------------------------------------------------------------------
 
 #Include HotkeyRegistrations.ahk
+; #Include GlobalHotkeys.ahk
 
 #Requires AutoHotkey v2.0
 SetWorkingDir A_ScriptDir
@@ -16,12 +17,6 @@ InstallKeybdHook
 #UseHook
 #SingleInstance force
 #MaxThreadsPerHotkey 2
-#SuspendExempt
-; RShift & F9::Run "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\AutoHotkey Window Spy.lnk"
-; RShift & F10::Pause
-; RShift & F11::Reload
-; RShift & F12::Suspend
-#SuspendExempt False
 CoordMode "Mouse", "Window"
 
 A_TrayMenu.Insert("&Window Spy", "List of Keys", keylist)
@@ -138,129 +133,62 @@ CreateMenuFromFile(configText)
 
 MenuHandler(handler, name, *)
 {
+    if RegExMatch(handler, "^(S|R|P|M)(\d*)$", &match)
+    {
+        typeMap := Map(
+            "S", ["", false],
+            "R", ["adg `"`"", false],
+            "P", ["adv `"`"", false],
+            "M", ["amxd `"`"", false]
+        )
+
+        if (typeObj := typeMap.Get(match[1], ""))
+        {
+            dnCount := match[2] ? Integer(match[2]) : 1
+            genericLoader(name, typeObj[1], dnCount, typeObj[2])
+            return
+        }
+    }
+
     switch handler
     {
-        case "S": stock(name)
-        case "S2": stock2(name)
-        case "R": rack(name)
-        case "P": preset(name)
-        case "M": max(name)
-        case "2": vst2(name)
-        case "3": vst3(name)
+        case "2": genericLoader(name, "vst `"`"", 1, true)
+        case "3": genericLoader(name, "vst3 `"`"", 1, true)
         case "?": eg(name)
         case "???": omgitis(name)
     }
 }
 
-stock(itemName)
+genericLoader(itemName, prefix := "", dnCount := 1, needWinCheck := false)
 {
     Send "^f"
     Sleep 50
+    if (prefix != "")
+    {
+        SendText prefix
+        Sleep 10
+        Send "{Left}"
+    }
     SendText itemName
     Sleep 800
     Send "{Down}"
+    Sleep 300
+    Send "{Home}"
     Sleep 100
+    Loop (dnCount - 1)
+    {
+        Send "{Down}"
+        Sleep 50
+    }
+    Sleep 200
     Send "{Enter}"
+    if (needWinCheck)
+    {
+        if WinWaitNotActive("ahk_class Ableton Live Window Class")
+            WinActivate
+        Sleep 100
+    }
     Sleep 500
-    Send "{Esc}"
-}
-
-stock2(itemName)
-{
-    Send "^f"
-    Sleep 50
-    SendText itemName
-    Sleep 800
-    Send "{Down}"
-    Sleep 100
-    Send "{Down}"    
-    Sleep 100
-    Send "{Enter}"
-    Sleep 500
-    Send "{Esc}"
-}
-
-rack(itemName)
-{
-    Send "^f"
-    Sleep 50
-    SendText "adg `"`""
-    Sleep 10
-    Send "{Left}"
-    SendText itemName
-    Sleep 800
-    Send "{Down}"
-    Sleep 100
-    Send "{Enter}"
-    Sleep 500
-    Send "{Esc}"
-}
-
-preset(itemName)
-{
-    Send "^f"
-    Sleep 50
-    SendText "adv `"`""
-    Sleep 10
-    Send "{Left}"
-    SendText itemName
-    Sleep 800
-    Send "{Down}"
-    Sleep 100
-    Send "{Enter}"
-    Sleep 500
-    Send "{Esc}"
-}
-
-max(itemName)
-{
-    Send "^f"
-    Sleep 50
-    SendText "amxd `"`""
-    Sleep 10
-    Send "{Left}"
-    SendText itemName
-    Sleep 800
-    Send "{Down}"
-    Sleep 100
-    Send "{Enter}"
-    Sleep 500
-    Send "{Esc}"
-}
-
-vst2(itemName)
-{
-    Send "^f"
-    Sleep 50
-    SendText "vst `"`""
-    Sleep 10
-    Send "{Left}"
-    SendText itemName
-    Sleep 800
-    Send "{Down}"
-    Sleep 100
-    Send "{Enter}"
-    if WinWaitNotActive("ahk_class Ableton Live Window Class")
-        WinActivate
-    Sleep 100
-    Send "{Esc}"
-}
-
-vst3(itemName)
-{
-    Send "^f"
-    Sleep 50
-    SendText "vst3 `"`""
-    Sleep 10
-    Send "{Left}"
-    SendText itemName
-    Sleep 800
-    Send "{Down}"
-    Sleep 100
-    Send "{Enter}"
-    if WinWaitNotActive("ahk_class Ableton Live Window Class")
-        WinActivate
-    Sleep 100
     Send "{Esc}"
 }
 
