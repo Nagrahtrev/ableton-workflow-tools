@@ -379,14 +379,13 @@ if InStr(ClearSearchBox, "On")
     }
 }
 
-if InStr(LeftHandDelete, "On")
+#HotIf InStr(LeftHandDelete, "On") && WinActive("ahk_group Ableton")
+
+~`::
 {
-    ~`::
-    {
-        A_HotkeyInterval := 200
-        if (A_PriorHotkey = ThisHotkey && A_TimeSincePriorHotkey < A_HotkeyInterval)
-            Send "{Del}"
-    }
+    A_HotkeyInterval := 200
+    if (A_PriorHotkey = ThisHotkey && A_TimeSincePriorHotkey < A_HotkeyInterval)
+        Send "{Del}"
 }
 
 #HotIf
