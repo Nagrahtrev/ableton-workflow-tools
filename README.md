@@ -6,6 +6,8 @@
 
 </div>
 
+> **2025-07-03 Update** -- Dude!! Dude!! Go use [ALFIL Max](https://killihu.vstskins.com/alfil-max/)!! It's way better than sticking with these old ways.
+
 ## About This Project
   
 Personal [AutoHotkey](https://www.autohotkey.com/) scripts designed to optimize my workflows.  
@@ -124,7 +126,9 @@ Back up your messy plugin collection before resetting or upgrading the PC :)
 | Preferences Window | `F12` |
 | Toggle Loop | `F13` |
 | Take Lanes Visibility | `F14` |
-
+  
+> My keyboard doesn't have F13/F14 keys, but my Razer DeathAdder V2X mouse has 2 extra programmable buttons. I've assigned F13 and F14 to those.
+  
 ### Optional Modules
 - Disable Quit Shortcut -- `CTRL`+`Q`
 - Swap `TAB` and `SHIFT`+`TAB`
